@@ -17,6 +17,7 @@ impl MainState {
 impl event::EventHandler for MainState {
     fn update(&mut self, _ctx: &mut Context) -> GameResult {
         self.pos_x = self.pos_x % 800.0 + 1.0;
+
         Ok(())
     }
 
@@ -27,10 +28,11 @@ impl event::EventHandler for MainState {
             ctx,
             graphics::DrawMode::fill(),
             Vec2::new(0.0, 0.0),
-            100.0,
+            10.0,
             2.0,
             graphics::WHITE,
         )?;
+
         graphics::draw(ctx, &circle, (Vec2::new(self.pos_x, 380.0),))?;
 
         graphics::present(ctx)?;
