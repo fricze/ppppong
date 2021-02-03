@@ -1,15 +1,20 @@
 use ggez::event;
+use ggez::event::{KeyCode, KeyMods};
 use ggez::graphics;
 use ggez::{Context, GameResult};
 use glam::*;
 
 struct MainState {
     pos_x: f32,
+    paddle_y: f32,
 }
 
 impl MainState {
     fn new() -> GameResult<MainState> {
-        let s = MainState { pos_x: 0.0 };
+        let s = MainState {
+            pos_x: 0.0,
+            paddle_y: 100.0,
+        };
         Ok(s)
     }
 }
@@ -40,12 +45,32 @@ impl event::EventHandler for MainState {
             graphics::WHITE,
         )?;
 
-        graphics::draw(ctx, &paddle, (Vec2::new(0.0, 190.0),))?;
+        graphics::draw(ctx, &paddle, (Vec2::new(0.0, self.paddle_y),))?;
 
         graphics::draw(ctx, &circle, (Vec2::new(self.pos_x, 380.0),))?;
 
         graphics::present(ctx)?;
         Ok(())
+    }
+
+    fn key_down_event(
+        &mut self,
+        _ctx: &mut Context,
+        keycode: KeyCode,
+        _keymods: KeyMods,
+        _repeat: bool,
+    ) {
+        match keycode {
+            KeyCode::Down => {
+                self.paddle_y = self.paddle_y % 800.0 + 4.0;
+            }
+            KeyCode::Up => {
+                self.paddle_y = self.paddle_y % 800.0 - 4.0;
+            }
+            _ => (),
+        }
+
+        ()
     }
 }
 
