@@ -33,6 +33,15 @@ impl event::EventHandler for MainState {
             graphics::WHITE,
         )?;
 
+        let paddle = graphics::Mesh::new_rectangle(
+            ctx,
+            graphics::DrawMode::fill(),
+            graphics::Rect::new(0.0, 0.0, 10.0, 40.0),
+            graphics::WHITE,
+        )?;
+
+        graphics::draw(ctx, &paddle, (Vec2::new(0.0, 190.0),))?;
+
         graphics::draw(ctx, &circle, (Vec2::new(self.pos_x, 380.0),))?;
 
         graphics::present(ctx)?;
