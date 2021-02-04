@@ -4,7 +4,6 @@ use ggez::graphics;
 use ggez::{Context, GameResult};
 use glam::*;
 
-#[derive(Debug, Copy, Clone)]
 struct Paddle {
     x: f32,
     y: f32,
@@ -84,6 +83,12 @@ impl event::EventHandler for MainState {
             }
             KeyCode::Up => {
                 self.paddle_left.y = self.paddle_left.y % 800.0 - 4.0;
+            }
+            KeyCode::J => {
+                self.paddle_right.y = self.paddle_right.y % 800.0 + 4.0;
+            }
+            KeyCode::K => {
+                self.paddle_right.y = self.paddle_right.y % 800.0 - 4.0;
             }
             _ => (),
         }
