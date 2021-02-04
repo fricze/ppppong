@@ -27,8 +27,11 @@ impl MainState {
 }
 
 impl event::EventHandler for MainState {
-    fn update(&mut self, _ctx: &mut Context) -> GameResult {
+    fn update(&mut self, ctx: &mut Context) -> GameResult {
         self.pos_x = self.pos_x % 800.0 + 1.0;
+
+        let rect = ggez::graphics::screen_coordinates(ctx);
+        self.paddle_right.x = rect.w - 10.0;
 
         Ok(())
     }
@@ -79,16 +82,16 @@ impl event::EventHandler for MainState {
     ) {
         match keycode {
             KeyCode::Down => {
-                self.paddle_left.y = self.paddle_left.y % 800.0 + 4.0;
+                self.paddle_left.y = self.paddle_left.y % 800.0 + 12.0;
             }
             KeyCode::Up => {
-                self.paddle_left.y = self.paddle_left.y % 800.0 - 4.0;
+                self.paddle_left.y = self.paddle_left.y % 800.0 - 12.0;
             }
             KeyCode::J => {
-                self.paddle_right.y = self.paddle_right.y % 800.0 + 4.0;
+                self.paddle_right.y = self.paddle_right.y % 800.0 + 12.0;
             }
             KeyCode::K => {
-                self.paddle_right.y = self.paddle_right.y % 800.0 - 4.0;
+                self.paddle_right.y = self.paddle_right.y % 800.0 - 12.0;
             }
             _ => (),
         }
