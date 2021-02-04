@@ -4,16 +4,24 @@ use ggez::graphics;
 use ggez::{Context, GameResult};
 use glam::*;
 
+#[derive(Debug, Copy, Clone)]
+struct Paddle {
+    x: f32,
+    y: f32,
+}
+
 struct MainState {
     pos_x: f32,
-    paddle_y: f32,
+    paddle_left: Paddle,
+    paddle_right: Paddle,
 }
 
 impl MainState {
     fn new() -> GameResult<MainState> {
         let s = MainState {
             pos_x: 0.0,
-            paddle_y: 100.0,
+            paddle_left: Paddle { x: 0.0, y: 0.0 },
+            paddle_right: Paddle { x: 100.0, y: 0.0 },
         };
         Ok(s)
     }
@@ -45,7 +53,17 @@ impl event::EventHandler for MainState {
             graphics::WHITE,
         )?;
 
-        graphics::draw(ctx, &paddle, (Vec2::new(0.0, self.paddle_y),))?;
+        graphics::draw(
+            ctx,
+            &paddle,
+            (Vec2::new(self.paddle_left.x, self.paddle_left.y),),
+        )?;
+
+        graphics::draw(
+            ctx,
+            &paddle,
+            (Vec2::new(self.paddle_right.x, self.paddle_right.y),),
+        )?;
 
         graphics::draw(ctx, &circle, (Vec2::new(self.pos_x, 380.0),))?;
 
@@ -62,10 +80,10 @@ impl event::EventHandler for MainState {
     ) {
         match keycode {
             KeyCode::Down => {
-                self.paddle_y = self.paddle_y % 800.0 + 4.0;
+                self.paddle_left.y = self.paddle_left.y % 800.0 + 4.0;
             }
             KeyCode::Up => {
-                self.paddle_y = self.paddle_y % 800.0 - 4.0;
+                self.paddle_left.y = self.paddle_left.y % 800.0 - 4.0;
             }
             _ => (),
         }
