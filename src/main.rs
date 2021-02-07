@@ -11,16 +11,18 @@ struct Paddle {
 
 struct MainState {
     pos_x: f32,
+    move_val: f32,
     paddle_left: Paddle,
     paddle_right: Paddle,
 }
 
 impl MainState {
-    fn new() -> GameResult<MainState> {
+    fn new(x_right: f32) -> GameResult<MainState> {
         let s = MainState {
             pos_x: 0.0,
             paddle_left: Paddle { x: 0.0, y: 0.0 },
-            paddle_right: Paddle { x: 100.0, y: 0.0 },
+            paddle_right: Paddle { x: x_right, y: 0.0 },
+            move_val: 3.0,
         };
         Ok(s)
     }
@@ -28,10 +30,15 @@ impl MainState {
 
 impl event::EventHandler for MainState {
     fn update(&mut self, ctx: &mut Context) -> GameResult {
-        self.pos_x = self.pos_x % 800.0 + 1.0;
+        let rect = ggez::graphics::screen_coordinates(&ctx);
 
-        let rect = ggez::graphics::screen_coordinates(ctx);
-        self.paddle_right.x = rect.w - 10.0;
+        if self.pos_x + 5.0 >= rect.w {
+            self.move_val = -3.0;
+        } else if self.pos_x <= 0.0 {
+            self.move_val = 3.0;
+        }
+
+        self.pos_x = self.pos_x % 800.0 + self.move_val;
 
         Ok(())
     }
@@ -103,6 +110,8 @@ impl event::EventHandler for MainState {
 pub fn main() -> GameResult {
     let cb = ggez::ContextBuilder::new("super_simple", "ggez");
     let (ctx, event_loop) = cb.build()?;
-    let state = MainState::new()?;
+
+    let rect = ggez::graphics::screen_coordinates(&ctx);
+    let state = MainState::new(rect.w - 10.0)?;
     event::run(ctx, event_loop, state)
 }
