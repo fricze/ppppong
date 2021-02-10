@@ -9,9 +9,14 @@ struct Paddle {
     y: f32,
 }
 
+struct Ball {
+    x: f32,
+    y: f32,
+}
+
 struct MainState {
-    pos_x: f32,
     move_val: f32,
+    ball: Ball,
     paddle_left: Paddle,
     paddle_right: Paddle,
 }
@@ -19,9 +24,9 @@ struct MainState {
 impl MainState {
     fn new(x_right: f32) -> GameResult<MainState> {
         let s = MainState {
-            pos_x: 0.0,
             paddle_left: Paddle { x: 0.0, y: 0.0 },
             paddle_right: Paddle { x: x_right, y: 0.0 },
+            ball: Ball { x: 0.0, y: 300.0 },
             move_val: 3.0,
         };
         Ok(s)
@@ -32,13 +37,21 @@ impl event::EventHandler for MainState {
     fn update(&mut self, ctx: &mut Context) -> GameResult {
         let rect = ggez::graphics::screen_coordinates(&ctx);
 
-        if self.pos_x + 5.0 >= rect.w {
+        let right_wall_collision = self.ball.x + 5.0 >= rect.w;
+        let left_wall_collision = self.ball.x <= 5.0;
+
+        let left_paddle_collision =
+            self.ball.y <= self.paddle_left.y + 40.0 && self.ball.y >= self.paddle_left.y - 10.0;
+        let right_paddle_collision =
+            self.ball.y <= self.paddle_right.y + 40.0 && self.ball.y >= self.paddle_right.y - 10.0;
+
+        if right_wall_collision && right_paddle_collision {
             self.move_val = -3.0;
-        } else if self.pos_x <= 0.0 {
+        } else if left_wall_collision && left_paddle_collision {
             self.move_val = 3.0;
         }
 
-        self.pos_x = self.pos_x % 800.0 + self.move_val;
+        self.ball.x = self.ball.x % 800.0 + self.move_val;
 
         Ok(())
     }
@@ -74,7 +87,7 @@ impl event::EventHandler for MainState {
             (Vec2::new(self.paddle_right.x, self.paddle_right.y),),
         )?;
 
-        graphics::draw(ctx, &circle, (Vec2::new(self.pos_x, 380.0),))?;
+        graphics::draw(ctx, &circle, (Vec2::new(self.ball.x, self.ball.y),))?;
 
         graphics::present(ctx)?;
         Ok(())
