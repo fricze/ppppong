@@ -66,5 +66,6 @@ pub fn main() -> GameResult {
 
     let rect = ggez::graphics::screen_coordinates(&ctx);
     let state = state::MainState::new(rect.w - 10.0)?;
+
     event::run(ctx, event_loop, state)
 }
